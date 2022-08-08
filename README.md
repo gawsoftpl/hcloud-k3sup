@@ -2,8 +2,9 @@
 Script for create k3s cluster for dev or tests in Hetzner Cloud
 
 ## Required env
-NAME
-
+```
+NAME=test
+```
 ## Additional env
 ```
 IMAGE=ubuntu-22.04
