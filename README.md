@@ -1,5 +1,5 @@
 # Overview
-Script for create k3s cluster for dev or tests in Hetzner Cloud
+Script for create k3s cluster for dev or tests in Hetzner Cloud. SSH key you have add in Hetzner before run this script. Use SSH_KEY ENV for setup ssh key name.
 
 ## Required env
 ```
@@ -28,5 +28,5 @@ Delete cluster
 
 ## Docker
 ```sh
-docker run -e HCLOUD_TOKEN=abc -e NAME=test gawsoft/hcloud-k3sup:latest 
+docker run -v ~/.ssh:/home/appuser/.ssh/ -e HCLOUD_TOKEN=abc -e NAME=test gawsoft/hcloud-k3sup:latest 
 ```

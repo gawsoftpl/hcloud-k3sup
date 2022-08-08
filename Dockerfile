@@ -1,5 +1,9 @@
 FROM alpine
 
+RUN apk update && apk add openssh
+
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+
 RUN wget -O k3sup https://github.com/alexellis/k3sup/releases/download/0.12.0/k3sup \
     && chmod +x k3sup \
     && mv k3sup /usr/bin/k3sup
@@ -11,7 +15,7 @@ RUN wget -O hcloud.tar.gz https://github.com/hetznercloud/cli/releases/download/
 
 WORKDIR /project
 
-USER 1000
+USER appuser
 
 COPY *.sh ./
 
