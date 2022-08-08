@@ -17,6 +17,6 @@ WORKDIR /project
 
 USER appuser
 
-COPY *.sh ./
+COPY hcloud-* /usr/bin/
 
-ENTRYPOINT [ "/bin/sh", "hcloud-k3sup.sh" ]
+ENTRYPOINT [ "hcloud-k3sup" ]
