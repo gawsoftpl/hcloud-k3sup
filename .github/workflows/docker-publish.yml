@@ -23,5 +23,5 @@ jobs:
       run: |
             docker image build -t gawsoft/hcloud-k3sup .
             # Publish latest
-            docker image tag gawsoft/hcloud-k3sup:${{ github.event.ref }} gawsoft/hcloud-k3sup:latest
+            docker image tag gawsoft/hcloud-k3sup:$GITHUB_SHA gawsoft/hcloud-k3sup:latest
             docker image push gawsoft/hcloud-k3sup:latest
