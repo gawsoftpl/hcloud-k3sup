@@ -13,7 +13,7 @@ RUN wget -O hcloud.tar.gz https://github.com/hetznercloud/cli/releases/download/
     && chmod +x hcloud \
     && mv hcloud /usr/bin/hcloud
 
-WORKDIR /project
+WORKDIR /hcloud-k3s
 
 USER appuser
 
