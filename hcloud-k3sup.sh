@@ -1,0 +1,66 @@
+#!/bin/sh
+
+IMAGE=${IMAGE:-'ubuntu-22.04'}
+MASTER_TYPE=${MASTER_TYPE:-'cx11'}
+WORKER_TYPE=${WORKER_TYPE:-'cx21'}
+SSH_KEY=${SSK_KEY:-'admin'}
+WORKERS_NUM=${WORKERS_NUM:-1}
+K3S_VERSION=${K3S_VERSION:-'v1.24.3+k3s1'}
+LOCATION=${LOCATION:-'hel1'}
+
+if [ ${#NAME} -eq 0 ];
+then
+    echo "Please set NAME ENV first"
+    exit 1
+fi
+
+function wait_for_ssh(){
+    # Wait for server
+    until ssh -o StrictHostKeyChecking=no $1 "echo working"
+    do
+    echo "Still waiting for $1..."
+    sleep 5
+    done
+}
+
+# Check that project exists
+servers_list=`hcloud server list -l name=${NAME} | tail -n +2`
+
+if [ ${#servers_list} -gt 0 ];
+then
+    echo "Project with this name exists"
+    exit 1
+fi
+
+# Create servers
+hcloud server create --label k3s-auto=1 --label name=${NAME} --image=${IMAGE} --type=${MASTER_TYPE} --name=${NAME}-master --ssh-key=${SSH_KEY} --location=${LOCATION}
+
+for i in $WORKERS_NUM
+do
+echo Creating ${NAME}-worker-${i}
+hcloud server create --label k3s-auto=1 --label name=${NAME} --image=${IMAGE} --type=${WORKER_TYPE} --name="${NAME}-worker-${i}" --ssh-key=${SSH_KEY} --location=${LOCATION}
+done
+
+# Wait for master
+master_ip=`hcloud server ip ${NAME}-master`
+wait_for_ssh "root@${master_ip}"
+
+# Wait for slaves
+for i in $WORKERS_NUM
+do
+slave_ip=`hcloud server ip ${NAME}-worker-${i}`
+wait_for_ssh "root@${slave_ip}"
+done
+
+# Initialize master k3s
+k3sup install cluster --local-path ./kubeconfig --ip ${master_ip} --user root --k3s-extra-args="--disable traefik --disable servicelb ${K3S_EXTRA_ARGS}" --k3s-version ${K3S_VERSION}
+
+# Download kubeconfig
+#scp -o StrictHostKeyChecking=no root@${master_ip}:/etc/rancher/k3s/k3s.yaml ./kubeconfig
+
+# Initialize slave k3s
+for i in $WORKERS_NUM
+do
+slave_ip=`hcloud server ip ${NAME}-worker-${i}`
+k3sup join --ip ${slave_ip} --user root --server-ip=${master_ip}
+done
