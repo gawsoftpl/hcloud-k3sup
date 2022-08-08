@@ -11,6 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+    - uses: olegtarasov/get-tag@v2.1
+      id: tagName
     - name: Log in to Docker Hub
       run: |
             echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
@@ -23,5 +25,7 @@ jobs:
       run: |
             docker image build -t gawsoft/hcloud-k3sup .
             # Publish latest
-            docker image tag gawsoft/hcloud-k3sup:$GITHUB_SHA gawsoft/hcloud-k3sup:latest
+            docker image tag gawsoft/hcloud-k3sup gawsoft/hcloud-k3sup:$GIT_TAG_NAME
+            docker image push gawsoft/hcloud-k3sup:$GIT_TAG_NAME
+            docker image tag gawsoft/hcloud-k3sup gawsoft/hcloud-k3sup:latest
             docker image push gawsoft/hcloud-k3sup:latest
