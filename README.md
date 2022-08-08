@@ -28,5 +28,5 @@ Delete cluster
 
 ## Docker
 ```sh
-docker run -e NAME=test gawsoft/hcloud-k3sup:latest 
+docker run -e HCLOUD_TOKEN=abc -e NAME=test gawsoft/hcloud-k3sup:latest 
 ```
