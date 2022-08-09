@@ -1,5 +1,5 @@
 # Overview
-Script for create k3s cluster for dev or tests in Hetzner Cloud. SSH key you have add in Hetzner before run this script. Use SSH_KEY ENV for setup ssh key name.
+Script for create k3s cluster for dev or tests in Hetzner Cloud. SSH key you have add in Hetzner before run this script. Use SSH_KEY ENV for setup already added ssh. Otherwise will generate ssh-key
 
 ## Required env
 ```

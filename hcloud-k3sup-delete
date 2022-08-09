@@ -1,10 +1,12 @@
-#!/bin/sh
+#!/bin/bash
 
 if [ ${#1} -eq 0 ];
 then
     echo "Please set arg with project name to delete: hcloud-k3sup-delete test"
     exit 1
 fi
+
+hcloud ssh-key delete $1 || true
 
 servers=`hcloud server list -l name=${1} -o columns=name | tail -n +2`
 for name in $servers;
