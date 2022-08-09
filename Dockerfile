@@ -1,6 +1,6 @@
 FROM alpine
 
-RUN apk update && apk add openssh curl bash
+RUN apk update && apk add openssh curl bash jq
 
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
