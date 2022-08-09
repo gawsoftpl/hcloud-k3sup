@@ -29,7 +29,7 @@ fi
 if [ ${#SSH_KEY} -eq 0 ];
 then
 echo "Generate key ssh"
-SSH_KEY_PATH="/tmp/ssh-key"
+SSH_KEY_PATH="./ssh-key"
 ssh-keygen -t rsa -f ${SSH_KEY_PATH} -N ""
 echo "Uploading key to hcloud"
 hcloud ssh-key create --name=$NAME --public-key-from-file=${SSH_KEY_PATH}.pub
