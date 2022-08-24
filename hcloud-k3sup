@@ -49,7 +49,7 @@ fi
 # Create servers
 hcloud server create --label k3s-auto=1 --label name=${NAME} --image=${IMAGE} --type=${MASTER_TYPE} --name=${NAME}-master --ssh-key=${SSH_KEY} --location=${LOCATION}
 
-for i in $WORKERS_NUM
+for (( i=1; i<=$WORKERS_NUM; i++ ))
 do
 echo Creating ${NAME}-worker-${i}
 hcloud server create --label k3s-auto=1 --label name=${NAME} --image=${IMAGE} --type=${WORKER_TYPE} --name="${NAME}-worker-${i}" --ssh-key=${SSH_KEY} --location=${LOCATION}
@@ -60,7 +60,7 @@ master_ip=`hcloud server ip ${NAME}-master`
 wait_for_ssh "root@${master_ip}"
 
 # Wait for slaves
-for i in $WORKERS_NUM
+for (( i=1; i<=$WORKERS_NUM; i++ ))
 do
 slave_ip=`hcloud server ip ${NAME}-worker-${i}`
 wait_for_ssh "root@${slave_ip}"
@@ -79,7 +79,7 @@ k3sup install cluster \
 #scp -o StrictHostKeyChecking=no root@${master_ip}:/etc/rancher/k3s/k3s.yaml ./kubeconfig
 
 # Initialize slave k3s
-for i in $WORKERS_NUM
+for (( i=1; i<=$WORKERS_NUM; i++ ))
 do
 slave_ip=`hcloud server ip ${NAME}-worker-${i}`
 k3sup join --ip ${slave_ip} \
