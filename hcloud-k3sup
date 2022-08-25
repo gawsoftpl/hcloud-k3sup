@@ -36,7 +36,6 @@ hcloud ssh-key create --name=$NAME --public-key-from-file=${SSH_KEY_PATH}.pub
 SSH_KEY=$NAME
 fi
 
-
 # Check that project exists
 servers_list=`hcloud server list -l name=${NAME} | tail -n +2`
 
@@ -71,7 +70,7 @@ k3sup install cluster \
     --local-path ./kubeconfig \
     --ip ${master_ip} \
     --user root \
-    --k3s-extra-args="--disable traefik --disable servicelb ${K3S_EXTRA_ARGS}" \
+    --k3s-extra-args="--disable traefik ${K3S_EXTRA_ARGS}" \
     --k3s-version ${K3S_VERSION} \
     --ssh-key=${SSH_KEY_PATH}
 
