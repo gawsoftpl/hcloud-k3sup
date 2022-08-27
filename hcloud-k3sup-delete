@@ -6,7 +6,6 @@ then
     exit 1
 fi
 
-hcloud ssh-key delete $1 || true
 
 servers=`hcloud server list -l name=${1} -o columns=name | tail -n +2`
 for name in $servers;
@@ -15,3 +14,4 @@ do
     hcloud server delete $name
 done
 
+hcloud ssh-key delete $1 || true

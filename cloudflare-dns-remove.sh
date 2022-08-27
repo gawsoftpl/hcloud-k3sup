@@ -12,7 +12,7 @@ curl -X GET "https://api.cloudflare.com/client/v4/zones/${1}/dns_records" \
     | jq -r '.id' > /tmp/del-id.txt
 
 # Set variable with dns zone in cloudflare id
-export dns_record_id=`cat /tmp/del-id.txt`
+dns_record_id=`cat /tmp/del-id.txt`
 echo "Dns record id: $dns_record_id"
 
 # Delete staging subdomain

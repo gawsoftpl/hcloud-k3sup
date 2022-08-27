@@ -42,7 +42,7 @@ servers_list=`hcloud server list -l name=${NAME} | tail -n +2`
 if [ ${#servers_list} -gt 0 ];
 then
     echo "Project with this name exists"
-    exit 1
+    exit 0
 fi
 
 # Create servers
