@@ -13,11 +13,11 @@ RUN wget -O hcloud.tar.gz https://github.com/hetznercloud/cli/releases/download/
     && chmod +x hcloud \
     && mv hcloud /usr/bin/hcloud
 
-RUN cloudflare-* . \
-    && chmod +x cloudflare-* \
+COPY cloudflare-* ./
+RUN chmod +x cloudflare-* \
     && mv cloudflare-dns-add.sh /usr/bin/cloudflare-dns-add \
-    && mv cloudflare-dns-add.sh /usr/bin/cloudflare-dns-remove
-     
+    && mv cloudflare-dns-remove.sh /usr/bin/cloudflare-dns-remove
+
 WORKDIR /hcloud-k3s
 
 USER appuser

@@ -2,7 +2,7 @@
 
 if [ ${#STAGING_CF_DOMAIN_TOKEN} -eq 0 ];
 then
-    echo "NO SET $STAGING_CF_DOMAIN_TOKEN"
+    echo "NO SET ENV STAGING_CF_DOMAIN_TOKEN"
     exit 1
 fi
 
