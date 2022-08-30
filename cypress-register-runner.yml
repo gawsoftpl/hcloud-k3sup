@@ -22,7 +22,8 @@ runcmd:
         gitlab-runner register \
         --url $GITLAB_SERVER \
         --registration-token $GITLAB_TOKEN \
-        --tag-list e2e \
+        --tag-list $RUNNER_TAGS \
         --non-interactive \
         --executor docker \
         --docker-image=ruby:2.7
+

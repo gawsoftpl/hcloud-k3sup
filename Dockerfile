@@ -22,6 +22,7 @@ WORKDIR /hcloud-k3s
 
 USER appuser
 
+COPY cypress-register-runner.yml .
 COPY hcloud-* /usr/bin/
 
 ENTRYPOINT [ "hcloud-k3sup" ]
