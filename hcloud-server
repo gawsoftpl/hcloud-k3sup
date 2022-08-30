@@ -7,13 +7,7 @@ SERVER_TYPE=${SERVER_TYPE:-'cx11'}
 SSH_KEY=${SSH_KEY:-''}
 SERVER_NUM=${SERVER_NUM:-1}
 LOCATION=${LOCATION:-'hel1'}
-START_SCRIPT_CLI=""
 
-
-if [ ${#START_SCRIPT_PATH} -gt 0 ];
-then
-START_SCRIPT_CLI="--user-data-from-file=${START_SCRIPT_PATH}"
-fi
 
 if [ ${#NAME} -eq 0 ];
 then
@@ -34,5 +28,8 @@ fi
 for (( i=1; i<=$SERVER_NUM; i++ ))
 do
 echo Creating ${NAME}-server-${i}
-hcloud server create --label server=1 --label name=${NAME} --image=${IMAGE} --type=${SERVER_TYPE} --name="${NAME}-server-${i}" --ssh-key=${SSH_KEY} --location=${LOCATION} ${START_SCRIPT_CLI}
+hcloud server create --label server=1 --label name=${NAME} --image=${IMAGE} --type=${SERVER_TYPE} --name="${NAME}-server-${i}" --ssh-key=${SSH_KEY} --location=${LOCATION}
 done
+
+# Generate servers ips
+hcloud server list -l server=1 -l name=${NAME} -o noheader -o columns=ipv4 > servers-ips.txt
