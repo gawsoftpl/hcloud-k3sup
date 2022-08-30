@@ -83,6 +83,7 @@ do
 slave_ip=`hcloud server ip ${NAME}-worker-${i}`
 k3sup join --ip ${slave_ip} \
     --user root --server-ip=${master_ip} \
+    --k3s-version ${K3S_VERSION} \
     --ssh-key=${SSH_KEY_PATH}
 done
 
