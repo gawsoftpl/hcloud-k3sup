@@ -1,0 +1,38 @@
+#!/bin/bash
+
+# Create simple hcloud servers
+
+IMAGE=${IMAGE:-'docker-ce'}
+SERVER_TYPE=${SERVER_TYPE:-'cx11'}
+SSH_KEY=${SSK_KEY:-''}
+SERVER_NUM=${SERVER_NUM:-1}
+LOCATION=${LOCATION:-'hel1'}
+START_SCRIPT_CLI=""
+
+
+if [ ${#START_SCRIPT_PATH} -gt 0 ];
+then
+START_SCRIPT_CLI="--user-data-from-file=${START_SCRIPT_PATH}"
+fi
+
+if [ ${#NAME} -eq 0 ];
+then
+    echo "Please set NAME ENV first"
+    exit 1
+fi
+
+if [ ${#SSH_KEY} -eq 0 ];
+then
+echo "Generate key ssh"
+SSH_KEY_PATH="./ssh-key"
+ssh-keygen -t rsa -f ${SSH_KEY_PATH} -N ""
+echo "Uploading key to hcloud"
+hcloud ssh-key create --name=$NAME --public-key-from-file=${SSH_KEY_PATH}.pub
+SSH_KEY=$NAME
+fi
+
+for (( i=1; i<=$SERVER_NUM; i++ ))
+do
+echo Creating ${NAME}-server-${i}
+hcloud server create --label server=1 --label name=${NAME} --image=${IMAGE} --type=${SERVER_TYPE} --name="${NAME}-server-${i}" --ssh-key=${SSH_KEY} --location=${LOCATION} ${START_SCRIPT_CLI}
+done
