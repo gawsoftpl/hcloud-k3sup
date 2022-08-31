@@ -18,13 +18,15 @@ RUN chmod +x cloudflare-* \
     && mv cloudflare-dns-add.sh /usr/bin/cloudflare-dns-add \
     && mv cloudflare-dns-remove.sh /usr/bin/cloudflare-dns-remove
 
+COPY cypress-register-runner /usr/bin/
+RUN chmod +x /usr/bin/cypress-register-runner
+
+COPY hcloud-* /usr/bin/
+
 WORKDIR /hcloud-k3s
 
 USER appuser
 
-COPY cypress-register-runner /usr/bin
-RUN chmod +x /usr/bin/cypress-register-runner
 
-COPY hcloud-* /usr/bin/
 
 ENTRYPOINT [ "hcloud-k3sup" ]
