@@ -150,7 +150,13 @@ kubectl taint node ${NAME}-master node-role.kubernetes.io/control-plane:NoSchedu
 kubectl annotate node ${NAME}-master node-role.kubernetes.io/control-plane=true
 
 # Autoscaler
-kubectl apply -f /hcloud-k3s/autoscaler/autoscaler.yml
+autoscaler_yml_path=/hcloud-k3s/autoscaler/autoscaler.yml
+if [ ! -f $autoscaler_yml_path ];
+then
+autoscaler_yml_path=autoscaler/autoscaler.yml
+fi
+
+kubectl apply -f $autoscaler_yml_path
 
 cat <<EOF | kubectl apply -f -
 apiVersion: v1
