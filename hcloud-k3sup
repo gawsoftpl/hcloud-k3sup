@@ -10,7 +10,7 @@ AUTOSCALER=${AUTOSCALER:-"0"}
 SCRIPT_DIR=`dirname -- "$( readlink -f -- "$0"; )";`
 
 # PRIVATE VARS DO NOT EDIT
-SSH_KEY_PATH="~/.ssh/id_rsa"
+SSH_KEY_PATH=${SSH_KEY_PATH:-"~/.ssh/id_rsa"}
 
 function wait_for_ssh(){
     # Wait for server
