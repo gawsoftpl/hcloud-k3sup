@@ -40,6 +40,8 @@ COPY hcloud-* /usr/bin/
 
 WORKDIR /hcloud-k3s
 
+COPY autoscaler/ autoscaler
+
 USER appuser
 
 
