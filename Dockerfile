@@ -28,5 +28,4 @@ WORKDIR /hcloud-k3s
 USER appuser
 
 
-
 ENTRYPOINT [ "hcloud-k3sup" ]

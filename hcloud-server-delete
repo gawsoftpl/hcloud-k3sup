@@ -7,7 +7,7 @@ then
 fi
 
 
-servers=`hcloud server list -l name=${1} -l server=1 -o columns=name | tail -n +2`
+servers=`hcloud server list -o=json | jq --arg NAME "$1" -r '.[] | select(.labels.name==$NAME and .labels.server=="1") | .name'`
 for name in $servers;
 do
     echo Delete $name
