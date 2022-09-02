@@ -13,6 +13,18 @@ RUN wget -O hcloud.tar.gz https://github.com/hetznercloud/cli/releases/download/
     && chmod +x hcloud \
     && mv hcloud /usr/bin/hcloud
 
+RUN wget -O sops https://github.com/mozilla/sops/releases/download/v3.7.3/sops-v3.7.3.linux.amd64 \
+    && chmod +x sops \
+    && mv sops /usr/bin
+    
+
+RUN wget -O age.tar.gz https://github.com/FiloSottile/age/releases/download/v1.0.0/age-v1.0.0-linux-amd64.tar.gz \
+    && tar -xvf age.tar.gz \
+    && chmod +x age/age* \
+    && mv age/age* /usr/bin
+    
+RUN rm *.tar.gz
+
 COPY cloudflare-* ./
 RUN chmod +x cloudflare-* \
     && mv cloudflare-dns-add.sh /usr/bin/cloudflare-dns-add \
