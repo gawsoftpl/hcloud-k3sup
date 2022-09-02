@@ -7,7 +7,6 @@ WORKERS_NUM=${WORKERS_NUM:-1}
 K3S_VERSION=${K3S_VERSION:-'v1.24.3+k3s1'}
 LOCATION=${LOCATION:-'nbg1'}
 AUTOSCALER=${AUTOSCALER:-"0"}
-SCRIPT_DIR=`dirname -- "$( readlink -f -- "$0"; )";`
 
 # PRIVATE VARS DO NOT EDIT
 SSH_KEY_PATH=${SSH_KEY_PATH:-"~/.ssh/id_rsa"}
@@ -152,7 +151,7 @@ kubectl annotate node ${NAME}-master node-role.kubernetes.io/control-plane=true
 
 # Autoscaler
 
-kubectl apply -f ${SCRIPT_DIR}/autoscaler/autoscaler.yml
+kubectl apply -f autoscaler/autoscaler.yml
 
 cat <<EOF | kubectl apply -f -
 apiVersion: v1
