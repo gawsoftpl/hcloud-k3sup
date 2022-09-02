@@ -97,6 +97,9 @@ k3sup install cluster \
     --k3s-version ${K3S_VERSION} \
     --ssh-key=${SSH_KEY_PATH}
 
+# Get node token
+node_token=`ssh -o StrictHostKeyChecking=no -i ${SSH_KEY_PATH} root@${master_ip} "cat /var/lib/rancher/k3s/server/node-token"`
+
 export KUBECONFIG=`pwd`/kubeconfig
 
 # Initialize slave k3s
