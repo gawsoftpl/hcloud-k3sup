@@ -14,9 +14,9 @@ RUN wget -O hcloud.tar.gz https://github.com/hetznercloud/cli/releases/download/
     && mv hcloud /usr/bin/hcloud
 
 RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" \
-    && chmod +X kubectl \
+    && chmod +x kubectl \
     && mv kubectl /usr/bin
-    
+
 RUN wget -O sops https://github.com/mozilla/sops/releases/download/v3.7.3/sops-v3.7.3.linux.amd64 \
     && chmod +x sops \
     && mv sops /usr/bin    
