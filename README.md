@@ -14,6 +14,7 @@ SSH_KEY=admin
 WORKERS_NUM=1
 K3S_VERSION=v1.24.3+k3s1
 LOCATION=hel1
+AUTOSCALER=0
 ```
 
 ## Example
