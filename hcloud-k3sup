@@ -39,7 +39,7 @@ servers_list=`hcloud server list -l name=${NAME} | tail -n +2`
 if [ ${#servers_list} -gt 0 ];
 then
     master_ip=`hcloud server ip "${NAME}-master"`
-    echo "Project with this name exists ${master_ip}"
+    echo "Project with this name ${NAME}-master exists ${master_ip}"
     # If project already exists get kubeconfig from created server
     ssh -i $SSH_KEY_PATH -o StrictHostKeyChecking=no root@$master_ip "cat /etc/rancher/k3s/k3s.yaml" > kubeconfig 
     if [ $? -gt 0 ];

@@ -13,10 +13,13 @@ RUN wget -O hcloud.tar.gz https://github.com/hetznercloud/cli/releases/download/
     && chmod +x hcloud \
     && mv hcloud /usr/bin/hcloud
 
+RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" \
+    && chmod +X kubectl \
+    && mv kubectl /usr/bin
+    
 RUN wget -O sops https://github.com/mozilla/sops/releases/download/v3.7.3/sops-v3.7.3.linux.amd64 \
     && chmod +x sops \
-    && mv sops /usr/bin
-    
+    && mv sops /usr/bin    
 
 RUN wget -O age.tar.gz https://github.com/FiloSottile/age/releases/download/v1.0.0/age-v1.0.0-linux-amd64.tar.gz \
     && tar -xvf age.tar.gz \
