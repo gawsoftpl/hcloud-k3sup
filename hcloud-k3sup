@@ -33,6 +33,24 @@ then
     exit 1
 fi
 
+# Check that project exists
+servers_list=`hcloud server list -l name=${NAME} | tail -n +2`
+
+if [ ${#servers_list} -gt 0 ];
+then
+    master_ip=`hcloud server ip "${NAME}-master"`
+    echo "Project with this name exists ${master_ip}"
+    # If project already exists get kubeconfig from created server
+    ssh -i $SSH_KEY_PATH -o StrictHostKeyChecking=no root@$master_ip "cat /etc/rancher/k3s/k3s.yaml" > kubeconfig 
+    if [ $? -gt 0 ];
+    then
+        echo "Error with download kubeconfig from server"
+        exit 1
+    fi
+    sed -i "s/127.0.0.1/$master_ip/g" kubeconfig
+    exit 0
+fi
+
 if [ ${#SSH_KEY_NAME} -eq 0 ];
 then
 echo "Generate key ssh"
@@ -43,14 +61,6 @@ hcloud ssh-key create --name=$NAME --public-key-from-file=${SSH_KEY_PATH}.pub ||
 SSH_KEY_NAME=$NAME
 fi
 
-# Check that project exists
-servers_list=`hcloud server list -l name=${NAME} | tail -n +2`
-
-if [ ${#servers_list} -gt 0 ];
-then
-    echo "Project with this name exists"
-    exit 111
-fi
 
 # Create servers
 hcloud server create --label k3s-auto=1 --label name=${NAME} --image=${IMAGE} --type=${MASTER_TYPE} --name=${NAME}-master --ssh-key=${SSH_KEY_NAME} --location=${LOCATION}
@@ -164,4 +174,4 @@ fi
 
 # Autoscaler END
 
-echo "Generated ssh key: ${SSH_KEY_PATH}"
+echo "ssh key: ${SSH_KEY_PATH}"
