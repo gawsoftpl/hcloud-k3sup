@@ -7,7 +7,7 @@ then
 fi
 
 # Delete autoscaler servers
-servers=`hcloud server list -o=json | jq '.[] .name' | grep cpu-$1`
+servers=`hcloud server list -o=json | jq -r '.[] .name' | grep cpu-$1`
 for name in $servers;
 do
     echo Delete $name
