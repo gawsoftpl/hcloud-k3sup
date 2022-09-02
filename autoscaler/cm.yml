@@ -6,9 +6,8 @@ metadata:
 data:
   # Do not use _ in pool name use "-" NOT "_"
   #NODES_1: 0:10:CX11:NBG1:intel-cpu-1-2gb 
-  NODES_1: 1:10:CPX11:NBG1:amd-2cpu-2gb 
-  NODES_2: 1:10:CPX21:NBG1:amd-3cpu-4gb
-  NODES_3: 1:10:CPX31:NBG1:amd-4cpu-8gb
+  NODES_1: 1:4:CPX11:NBG1:amd-2cpu-2gb 
+  NODES_2: 1:4:CPX21:NBG1:amd-3cpu-4gb
   HCLOUD_SSH_KEY: pio
   HCLOUD_NETWORK: ""
   HCLOUD_IMAGE: ""

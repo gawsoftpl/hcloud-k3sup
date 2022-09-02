@@ -175,7 +175,7 @@ spec:
             # - --scale-down-delay-after-add=30m
             - --nodes=$(NODES_1) 
             - --nodes=$(NODES_2) 
-            - --nodes=$(NODES_3) 
+          
           envFrom:
             - configMapRef:
                 name: autoscaler
