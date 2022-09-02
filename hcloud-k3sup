@@ -2,7 +2,7 @@
 IMAGE=${IMAGE:-'ubuntu-22.04'}
 MASTER_TYPE=${MASTER_TYPE:-'cx11'}
 WORKER_TYPE=${WORKER_TYPE:-'cx21'}
-SSH_KEY=${SSH_KEY:-''}
+SSH_KEY_NAME=${SSH_KEY_NAME:-''}
 WORKERS_NUM=${WORKERS_NUM:-1}
 K3S_VERSION=${K3S_VERSION:-'v1.24.3+k3s1'}
 LOCATION=${LOCATION:-'nbg1'}
@@ -33,14 +33,14 @@ then
     exit 1
 fi
 
-if [ ${#SSH_KEY} -eq 0 ];
+if [ ${#SSH_KEY_NAME} -eq 0 ];
 then
 echo "Generate key ssh"
 SSH_KEY_PATH="./ssh-key"
 ssh-keygen -t rsa -f ${SSH_KEY_PATH} -N ""
 echo "Uploading key to hcloud"
 hcloud ssh-key create --name=$NAME --public-key-from-file=${SSH_KEY_PATH}.pub || exit 1
-SSH_KEY=$NAME
+SSH_KEY_NAME=$NAME
 fi
 
 # Check that project exists
@@ -53,12 +53,12 @@ then
 fi
 
 # Create servers
-hcloud server create --label k3s-auto=1 --label name=${NAME} --image=${IMAGE} --type=${MASTER_TYPE} --name=${NAME}-master --ssh-key=${SSH_KEY} --location=${LOCATION}
+hcloud server create --label k3s-auto=1 --label name=${NAME} --image=${IMAGE} --type=${MASTER_TYPE} --name=${NAME}-master --ssh-key=${SSH_KEY_NAME} --location=${LOCATION}
 
 for (( i=1; i<=$WORKERS_NUM; i++ ))
 do
 echo Creating ${NAME}-worker-${i}
-hcloud server create --label k3s-auto=1 --label name=${NAME} --image=${IMAGE} --type=${WORKER_TYPE} --name="${NAME}-worker-${i}" --ssh-key=${SSH_KEY} --location=${LOCATION}
+hcloud server create --label k3s-auto=1 --label name=${NAME} --image=${IMAGE} --type=${WORKER_TYPE} --name="${NAME}-worker-${i}" --ssh-key=${SSH_KEY_NAME} --location=${LOCATION}
 done
 
 # Wait for master
@@ -155,7 +155,7 @@ data:
   NODES_1: 1:10:CPX11:NBG1:2cpu-$NAME
   NODES_2: 1:10:CPX21:NBG1:3cpu-$NAME
   NODES_3: 1:10:CPX31:NBG1:4cpu-$NAME
-  HCLOUD_SSH_KEY: $SSH_KEY
+  HCLOUD_SSH_KEY: $SSH_KEY_NAME
   HCLOUD_NETWORK: ""
   HCLOUD_IMAGE: ""
 EOF
