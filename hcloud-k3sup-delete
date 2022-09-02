@@ -6,12 +6,21 @@ then
     exit 1
 fi
 
+# Delete autoscaler servers
+servers=`hcloud server list -o=json | jq '.[] .name' | grep cpu-$1`
+for name in $servers;
+do
+    echo Delete $name
+    hcloud server delete $name
+done
 
+# Delete normal servers
 servers=`hcloud server list -o=json | jq --arg NAME "$1" -r '.[] | select(.labels.name==$NAME and .labels."k3s-auto"=="1") | .name'`
 for name in $servers;
 do
     echo Delete $name
     hcloud server delete $name
 done
+
 
 hcloud ssh-key delete $1 || true

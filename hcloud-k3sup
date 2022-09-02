@@ -1,12 +1,13 @@
 #!/bin/bash
-
 IMAGE=${IMAGE:-'ubuntu-22.04'}
 MASTER_TYPE=${MASTER_TYPE:-'cx11'}
 WORKER_TYPE=${WORKER_TYPE:-'cx21'}
 SSH_KEY=${SSH_KEY:-''}
 WORKERS_NUM=${WORKERS_NUM:-1}
 K3S_VERSION=${K3S_VERSION:-'v1.24.3+k3s1'}
-LOCATION=${LOCATION:-'hel1'}
+LOCATION=${LOCATION:-'nbg1'}
+AUTOSCALER=${AUTOSCALER:-"0"}
+SCRIPT_DIR=`dirname -- "$( readlink -f -- "$0"; )";`
 
 # PRIVATE VARS DO NOT EDIT
 SSH_KEY_PATH="~/.ssh/id_rsa"
@@ -26,13 +27,19 @@ then
     exit 1
 fi
 
+if [ ${#HCLOUD_TOKEN} -eq 0 ];
+then
+    echo "Please set NAME ENV HCLOUD_TOKEN"
+    exit 1
+fi
+
 if [ ${#SSH_KEY} -eq 0 ];
 then
 echo "Generate key ssh"
 SSH_KEY_PATH="./ssh-key"
 ssh-keygen -t rsa -f ${SSH_KEY_PATH} -N ""
 echo "Uploading key to hcloud"
-hcloud ssh-key create --name=$NAME --public-key-from-file=${SSH_KEY_PATH}.pub
+hcloud ssh-key create --name=$NAME --public-key-from-file=${SSH_KEY_PATH}.pub || exit 1
 SSH_KEY=$NAME
 fi
 
@@ -65,17 +72,23 @@ slave_ip=`hcloud server ip ${NAME}-worker-${i}`
 wait_for_ssh "root@${slave_ip}"
 done
 
+
+if [ $AUTOSCALER=="1" ];
+then
+ksup_master_autoscaler="--disable-cloud-controller"
+K3S_EXTRA_ARGS="${K3S_EXTRA_ARGS} --kubelet-arg='cloud-provider=external'"
+fi
+
 # Initialize master k3s
 k3sup install cluster \
     --local-path ./kubeconfig \
     --ip ${master_ip} \
     --user root \
-    --k3s-extra-args="--disable traefik ${K3S_EXTRA_ARGS}" \
+    --k3s-extra-args="${ksup_master_autoscaler} --disable traefik ${K3S_EXTRA_ARGS}" \
     --k3s-version ${K3S_VERSION} \
     --ssh-key=${SSH_KEY_PATH}
 
-# Download kubeconfig
-#scp -o StrictHostKeyChecking=no root@${master_ip}:/etc/rancher/k3s/k3s.yaml ./kubeconfig
+export KUBECONFIG=`pwd`/kubeconfig
 
 # Initialize slave k3s
 for (( i=1; i<=$WORKERS_NUM; i++ ))
@@ -83,8 +96,72 @@ do
 slave_ip=`hcloud server ip ${NAME}-worker-${i}`
 k3sup join --ip ${slave_ip} \
     --user root --server-ip=${master_ip} \
+    --k3s-extra-args="${K3S_EXTRA_ARGS}" \
     --k3s-version ${K3S_VERSION} \
     --ssh-key=${SSH_KEY_PATH}
 done
+
+if [ $AUTOSCALER=="1" ];
+then
+# Autoscaler BEGIN
+cat <<EOF | base64 -w 0 > /tmp/secret_hcloud
+#!/bin/bash
+
+while ! ping -c 1 -W 1 ${master_ip}; do
+    echo "Waiting for ${master_ip} - network interface might be down..."
+    sleep 1
+done
+
+while ! ping -c 1 -W 1 github.com; do
+    echo "Waiting for github.com - network interface might be down..."
+    sleep 1
+done
+
+curl -sfL https://get.k3s.io | K3S_URL=https://${master_ip}:6443 K3S_TOKEN=${node_token} sh -s - agent \
+  --kubelet-arg="cloud-provider=external"
+EOF
+
+cloud_init=`cat /tmp/secret_hcloud`
+
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: Secret
+metadata:
+  name: hcloud
+  namespace: kube-system
+type: Opaque
+stringData:
+  cloud_init: ${cloud_init}
+  token: ${HCLOUD_TOKEN}
+EOF
+
+kubectl apply -f  https://github.com/hetznercloud/hcloud-cloud-controller-manager/releases/latest/download/ccm.yaml
+
+kubectl taint node ${NAME}-master node-role.kubernetes.io/control-plane:NoSchedule
+kubectl annotate node ${NAME}-master node-role.kubernetes.io/control-plane=true
+
+# Autoscaler
+
+kubectl apply -f ${SCRIPT_DIR}/autoscaler/autoscaler.yml
+
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: autoscaler
+  namespace: kube-system
+data:
+  # Do not use _ in pool name use "-" NOT "_"
+  NODES_1: 1:10:CPX11:NBG1:2cpu-$NAME
+  NODES_2: 1:10:CPX21:NBG1:3cpu-$NAME
+  NODES_3: 1:10:CPX31:NBG1:4cpu-$NAME
+  HCLOUD_SSH_KEY: $SSH_KEY
+  HCLOUD_NETWORK: ""
+  HCLOUD_IMAGE: ""
+EOF
+
+fi
+
+# Autoscaler END
 
 echo "Generated ssh key: ${SSH_KEY_PATH}"

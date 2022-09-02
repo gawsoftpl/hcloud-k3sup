@@ -1,0 +1,17 @@
+#!/bin/bash
+
+MASTER_IP="x.x.x.x"
+TOKEN="K104f185e6beda49c450cbdff71eb90aa166230aced6fef87f3a188e97fc29ede23::server:5050f4a20c73c39181a70d25a26a9c7c"
+
+while ! ping -c 1 -W 1 ${MASTER_IP}; do
+    echo "Waiting for ${MASTER_IP} - network interface might be down..."
+    sleep 1
+done
+
+while ! ping -c 1 -W 1 github.com; do
+    echo "Waiting for github.com - network interface might be down..."
+    sleep 1
+done
+
+curl -sfL https://get.k3s.io | K3S_URL=https://${MASTER_IP}:6443 K3S_TOKEN=${TOKEN} sh -s - agent \
+  --kubelet-arg="cloud-provider=external"
