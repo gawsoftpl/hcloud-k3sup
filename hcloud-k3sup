@@ -169,8 +169,8 @@ metadata:
   namespace: kube-system
 data:
   # Do not use _ in pool name use "-" NOT "_"
-  NODES_1: 1:10:CPX11:NBG1:2cpu-$NAME
-  NODES_2: 1:10:CPX21:NBG1:3cpu-$NAME
+  NODES_1: 1:4:CPX11:NBG1:2cpu-$NAME
+  NODES_2: 1:4:CPX21:NBG1:3cpu-$NAME
   HCLOUD_SSH_KEY: $SSH_KEY_NAME
   HCLOUD_NETWORK: ""
   HCLOUD_IMAGE: ""
