@@ -67,7 +67,7 @@ hcloud server create --label k3s-auto=1 --label name=${NAME} --image=${IMAGE} --
 for (( i=1; i<=$WORKERS_NUM; i++ ))
 do
 echo Creating ${NAME}-worker-${i}
-hcloud server create --label k3s-auto=1 --label name=${NAME} --image=${IMAGE} --type=${WORKER_TYPE} --name="${NAME}-worker-${i}" --ssh-key=${SSH_KEY_NAME} --location=${LOCATION} &
+hcloud server create --label k3s-auto=1 --label name=${NAME} --image=${IMAGE} --type=${WORKER_TYPE} --name="${NAME}-worker-${i}" --ssh-key=${SSH_KEY_NAME} --location=${LOCATION}
 done
 
 # Wait for master
