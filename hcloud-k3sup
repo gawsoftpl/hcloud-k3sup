@@ -74,8 +74,6 @@ done
 master_ip=`hcloud server ip ${NAME}-master`
 wait_for_ssh "root@${master_ip}"
 
-# Sleep for some time for workers
-sleep 4
 
 # Wait for slaves
 for (( i=1; i<=$WORKERS_NUM; i++ ))
