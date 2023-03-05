@@ -87,6 +87,7 @@ if [ $AUTOSCALER=="1" ];
 then
 ksup_master_autoscaler="--disable-cloud-controller"
 K3S_EXTRA_ARGS="${K3S_EXTRA_ARGS} --kubelet-arg='cloud-provider=external'"
+K3S_EXTRA_ARGS_SLAVE="${K3S_EXTRA_ARGS_SLAVE} --kubelet-arg='cloud-provider=external'"
 fi
 
 # Initialize master k3s
@@ -109,7 +110,7 @@ do
 slave_ip=`hcloud server ip ${NAME}-worker-${i}`
 k3sup join --ip ${slave_ip} \
     --user root --server-ip=${master_ip} \
-    --k3s-extra-args="${K3S_EXTRA_ARGS}" \
+    --k3s-extra-args="${K3S_EXTRA_ARGS_SLAVE}" \
     --k3s-version ${K3S_VERSION} \
     --ssh-key=${SSH_KEY_PATH} &
 done
