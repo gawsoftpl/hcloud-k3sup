@@ -2,8 +2,6 @@ FROM alpine
 
 RUN apk update && apk add openssh curl bash jq
 
-RUN echo "start"
-
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
 RUN wget -O k3sup https://github.com/alexellis/k3sup/releases/download/0.12.12/k3sup \
@@ -41,6 +39,8 @@ RUN chmod +x /usr/bin/cypress-register-runner
 COPY hcloud-* /usr/bin/
 
 WORKDIR /hcloud-k3s
+
+RUN chown appuser:appgroup /hcloud-k3s
 
 COPY autoscaler/ autoscaler
 
