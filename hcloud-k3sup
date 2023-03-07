@@ -83,7 +83,7 @@ wait_for_ssh "root@${slave_ip}"
 done
 
 
-if [ $AUTOSCALER=="1" ];
+if [ $AUTOSCALER -eq "1" ];
 then
 ksup_master_autoscaler="--disable-cloud-controller"
 K3S_EXTRA_ARGS="${K3S_EXTRA_ARGS} --kubelet-arg='cloud-provider=external'"
@@ -115,7 +115,7 @@ k3sup join --ip ${slave_ip} \
     --ssh-key=${SSH_KEY_PATH} &
 done
 
-if [ $AUTOSCALER=="1" ];
+if [ $AUTOSCALER -eq "1" ];
 then
 # Autoscaler BEGIN
 cat <<EOF | base64 -w 0 > /tmp/secret_hcloud
