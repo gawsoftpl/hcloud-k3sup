@@ -1,4 +1,5 @@
 #!/bin/bash
+
 IMAGE=${IMAGE:-'ubuntu-22.04'}
 MASTER_TYPE=${MASTER_TYPE:-'cx11'}
 WORKER_TYPE=${WORKER_TYPE:-'cx21'}
@@ -103,6 +104,8 @@ k3sup install cluster \
 node_token=`ssh -o StrictHostKeyChecking=no -i ${SSH_KEY_PATH} root@${master_ip} "cat /var/lib/rancher/k3s/server/node-token"`
 
 export KUBECONFIG=`pwd`/kubeconfig
+
+sleep 10
 
 # Initialize slave k3s
 for (( i=1; i<=$WORKERS_NUM; i++ ))
