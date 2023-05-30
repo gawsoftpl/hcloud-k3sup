@@ -110,6 +110,7 @@ sleep 10
 # Initialize slave k3s
 for (( i=1; i<=$WORKERS_NUM; i++ ))
 do
+sleep 7
 slave_ip=`hcloud server ip ${NAME}-worker-${i}`
 k3sup join --ip ${slave_ip} \
     --user root --server-ip=${master_ip} \
